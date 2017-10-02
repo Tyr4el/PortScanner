@@ -23,6 +23,7 @@ namespace PortScanner
 			// Set the port range to a string
 			string portRange = args[1];
 
+			// Split the port range into an array delimited by a -
 			string[] split = portRange.Split('-');
 			if (split.Length != 2)
 			{
@@ -41,9 +42,11 @@ namespace PortScanner
 
 			for (int port = start; port <= end; port++)
 			{
+				// Create a new socket upon each iteration of the loop
 				Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 				try
 				{
+					// Try to connect to the port at the address
 					socket.Connect(address, port);
 					Console.WriteLine($"Port: {port} \t OPEN");
 				}
@@ -54,6 +57,7 @@ namespace PortScanner
 
 			}
 
+			Console.WriteLine("Port scanning complete.");
 			Console.ReadLine();
 			return 0;
 		}

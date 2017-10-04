@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace PortScanner
 {
@@ -40,25 +41,36 @@ namespace PortScanner
 			Console.WriteLine("TCP Port Scanner");
 			Console.WriteLine("----------------------------");
 
-			for (int port = start; port <= end; port++)
-			{
-				// Create a new socket upon each iteration of the loop
-				Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-				try
-				{
-					// Try to connect to the port at the address
-					socket.Connect(address, port);
-					Console.WriteLine($"Port: {port} \t OPEN");
-				}
-				catch (SocketException e)
-				{
-					Console.WriteLine($"Port: {port} \t CLOSED");
-				}
+			List<int> portList = new List<int>();
 
+			Parallel.For(start, end, port =>
+			{
+				{
+					// Create a new socket upon each iteration of the loop
+					Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+					try
+					{
+						// Try to connect to the port at the address
+						socket.Connect(address, port);
+						portList.Add(port);
+					}
+					catch (SocketException e)
+					{
+						// Do nothing here
+					}
+
+				}
+			});
+
+			foreach (int port in portList)
+			{
+				Console.WriteLine($"Port: {port} \t OPEN");
 			}
+
 
 			Console.WriteLine("Port scanning complete.");
 			Console.ReadLine();
+
 			return 0;
 		}
 	}
